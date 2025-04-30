@@ -1,8 +1,7 @@
 package spi
 
 import (
-	"errors"
-
+	"github.com/hyperledger/aries-framework-go/pkg/kms"
 	kms_spi "github.com/hyperledger/aries-framework-go/spi/kms"
 )
 
@@ -24,7 +23,7 @@ func (s *inMemoryKMSStore) Put(secretId string, key []byte) error {
 func (s *inMemoryKMSStore) Get(secretId string) ([]byte, error) {
 	key, ok := s.Keys[secretId]
 	if !ok {
-		return nil, errors.New("key not found")
+		return nil, kms.ErrKeyNotFound
 	}
 	return key, nil
 }

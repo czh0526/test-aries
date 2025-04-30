@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/czh0526/test-aries/spi"
 	"github.com/google/tink/go/subtle/random"
 	"github.com/hyperledger/aries-framework-go/component/kmscrypto/secretlock/local/masterlock/hkdf"
 	"github.com/hyperledger/aries-framework-go/pkg/crypto/tinkcrypto"
@@ -24,13 +25,12 @@ func TestEncryptDecrypt_Roate(t *testing.T) {
 	sl := createMasterKeyAndSecretLock(t)
 
 	// 构建 KMS Store 对象
-	kmsStore := newInMemoryKMSStore()
+	kmsStore := spi.NewInMemoryKMSStore()
 
 	// 构建 KMS 服务对象
-	kmsService, err := localkms.New(testMasterKeyURI, &mockStorageProvider{
-		storage:    kmsStore,
-		secretLock: sl,
-	})
+	kmsService, err := localkms.New(testMasterKeyURI,
+		spi.MockStorageProvider(kmsStore, sl),
+	)
 	assert.NoError(t, err)
 
 	keyTemplates := []kms_spi.KeyType{
@@ -70,13 +70,12 @@ func TestEncryptDecrypt_NoRotate(t *testing.T) {
 	sl := createMasterKeyAndSecretLock(t)
 
 	// 构建 KMS Store 对象
-	kmsStore := newInMemoryKMSStore()
+	kmsStore := spi.NewInMemoryKMSStore()
 
 	// 构建 KMS 服务对象
-	kmsService, err := localkms.New(testMasterKeyURI, &mockStorageProvider{
-		storage:    kmsStore,
-		secretLock: sl,
-	})
+	kmsService, err := localkms.New(testMasterKeyURI,
+		spi.MockStorageProvider(kmsStore, sl),
+	)
 	assert.NoError(t, err)
 
 	keyTemplates := []kms_spi.KeyType{
